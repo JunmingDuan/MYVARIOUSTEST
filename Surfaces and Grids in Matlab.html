@@ -1,0 +1,106 @@
+
+<!-- saved from url=(0100)http://geology.wlu.edu/connors/primers/Surfaces_and_Grids_in_Matlab/Surfaces_and_Grids_in_Matlab.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<link rel="Edit-Time-Data" href="http://geology.wlu.edu/connors/primers/Surfaces_and_Grids_in_Matlab/Surfaces_and_Grids_in_Matlab_editdata.mso">
+<title>Surfaces and Grids in Matlab</title>
+<style><!--
+.Normal
+	{font-size:12.0pt;
+	font-family:"Times New Roman";}
+.SpellE
+	{}
+.GramE
+	{}
+-->
+</style>
+</head>
+<body lang="EN-US" link="blue" vlink="blue" class="Normal" bgcolor="#FFFFFF">
+<p><b>Surfaces and Grids in <span class="SpellE">Matlab</span></b></p>
+<p>The ability to handle surfaces and grids is one of <span class="SpellE">Matlab’s</span> many strengths.&nbsp; Since a lot of geologic data is 
+  naturally of more than one dimension, we have use for these capabilities.&nbsp; </p>
+<p><i>Surfaces</i></p>
+<p>A surface is a set of polygons.&nbsp; They are easy to plot in <span class="SpellE">Matlab</span>.&nbsp;Because data is often not regularly sampled, surfaces are often 
+  modeled as a set of interlocking triangles. &nbsp;There is a particularly compact 
+  way of making surfaces of irregularly spaced data called a <span class="SpellE">Delaunay</span> triangulation.&nbsp; <span class="SpellE">Delaunay</span> triangulation is the set 
+  of triangles built by connecting each of the points of an irregularly spaced 
+  data set where the vertices of the triangles are the data points.&nbsp; Thus it is 
+  an exact representation of your known data and linear interpolation in between.&nbsp;</p>
+<p>To see what we mean, load up the <span class="SpellE">dmap.dat</span> data file 
+  from the Q:\geo185 directory by typing “load <span class="SpellE">dmap.dat</span>”</p>
+<p>This is an <span class="SpellE">X<span class="GramE">,Y,Z</span></span> elevation 
+  data file for columns 1,2,3.</p>
+<p>First visualize the file with the “plot3” command</p>
+<p>&gt;&gt; <span class="SpellE">p_h</span>=plot3(<span class="SpellE">dmap</span>(:,1),<span class="SpellE">dmap</span>(:,2),<span class="SpellE">dmap</span>(:,3),'o') </p>
+<p>The 'o' parameter plots the data points as individual circles as opposed to 
+  a 3D-line.</p>
+<p>The “<span class="SpellE">p_h</span>” is called a handle.&nbsp; You could have just 
+  typed plot3… without the “<span class="SpellE">p_h</span>” but by adding this you have the ability to later delete 
+  this graphic element</p>
+<p>&nbsp; <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg3.jpg" v:shapes="_x0000_i1027"> </p>
+<p>&gt;&gt; hold on</p>
+<p>This keeps the plot held for more plotting</p>
+<p>Now in order to plot the data as a triangulated surface we need to build the 
+  surface first with:</p>
+<p>&gt;&gt;tri=<span class="SpellE"><span class="GramE">delaunay</span></span><span class="GramE">(</span><span class="SpellE">dmap</span>(:,1),<span class="SpellE">dmap</span>(:,2))</p>
+<p>This creates <span class="GramE">a</span> n x 3 matrix of the <span class="SpellE">vertice</span> row entries that are needed for each triangle</p>
+<p><span class="GramE">to</span> visualize this triangulated surface type:</p>
+<p>&gt;&gt; <span class="SpellE">trisurf</span>(<span class="SpellE">tri,dmap</span>(:,1),<span class="SpellE">dmap</span>(:,2),<span class="SpellE">dmap</span>(:,3))</p>
+<p> <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg4.jpg" v:shapes="_x0000_i1028"> </p>
+<p>Note that the vertex of each triangle is one of the data points.</p>
+<p>If you want to see the plot without the <span class="GramE">points</span> type:</p>
+<p>&gt;&gt;<span class="GramE">delete(</span><span class="SpellE">p_h</span>)</p>
+<p>This surface plot is efficient but it doesn’t produce a very pretty picture 
+  (well at least for this small data set, for large data sets, triangulated surfaces 
+  are often preferable because they are more compact and there is enough data 
+  that the surface looks good).</p>
+<p><i>Grids</i></p>
+<p>So we often want a regular spacing of the X and Y locations to make it smoother 
+  and not faceted.&nbsp; A regularly spaced data set is called a grid.&nbsp; It uses up 
+  more memory and thus is slower to manipulate because data is defined at every 
+  location.&nbsp; To convert the irregularly spaced data to regularly <span class="GramE">spaced</span> 
+  we need to grid it.&nbsp; This requires a couple of steps.&nbsp; First you need to define 
+  the spacing and extent of the grid by making two vectors of the X and Y upper 
+  and lower limits at a given spacing:</p>
+<p>&gt;&gt; <span class="SpellE">rangeY</span>=floor(min(<span class="SpellE">dmap</span>(:,2))):.2:ceil(max(<span class="SpellE">dmap</span>(:,2)))</p>
+<p>&gt;&gt;<span class="SpellE">rangeX</span>=floor(min(<span class="SpellE">dmap</span>(:,1))):.2:ceil(max(<span class="SpellE">dmap</span>(:,1)))</p>
+<p>0.2 is the spacing I have chosen.&nbsp; I was a little obscure in choosing the “<span class="GramE">floor(</span>min…” syntax.&nbsp; Try “<span class="GramE">min(</span><span class="SpellE">dmap</span>(:,2))” 
+  to see what that gives you and then try “floor(min(<span class="SpellE">dmap</span>(:,2)))” 
+  to see what that does.&nbsp; Hint: it is a way of controlling the rounding direction.</p>
+<p>Now make matrices for each X and Y location:</p>
+<p>&gt;&gt;[<span class="SpellE">X<span class="GramE">,Y</span></span>]=<span class="SpellE">meshgrid</span>(<span class="SpellE">rangeX,rangeY</span>)</p>
+<p>And then interpolate your Z values across this grid:</p>
+<p>&gt;&gt;Z=<span class="SpellE">griddata</span>(<span class="SpellE">dmap</span>(:,1),<span class="SpellE">dmap</span>(:,2),<span class="SpellE">dmap</span>(:,3),<span class="SpellE">X,Y</span>)</p>
+<p>To see the result:</p>
+<p>&gt;&gt;surf(<span class="SpellE">X<span class="GramE">,Y,Z</span></span>)</p>
+<p> <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg5.jpg" v:shapes="_x0000_i1029"> </p>
+<p>For a smoother interpolation add the “cubic” <span class="SpellE">spline</span> parameter:</p>
+<p><span lang="ES-VE">&gt;&gt;<span class="SpellE">Z=<span class="GramE">griddata</span></span><span class="GramE">(</span><span class="SpellE">dmap</span>(:,1),<span class="SpellE">dmap</span>(:,2),<span class="SpellE">dmap</span>(:,3),<span class="SpellE">X,Y</span>,'<span class="SpellE">cubic</span>')</span></p>
+<p>&gt;&gt;surf(<span class="SpellE">X<span class="GramE">,Y,Z</span></span>)</p>
+<p>Note that the grid values in between the data points vary smoothly and no longer 
+  have the facets we saw with the triangulated surface.</p>
+<p>If you want to make a contour plot of the <span class="SpellE">gridded</span> data you can do this by first defining the range and 
+  spacing of the Z values:</p>
+<p>&gt;&gt;<span class="SpellE">rangeZ</span>=floor(min(<span class="SpellE">dmap</span>(:,3))):10:ceil(max(<span class="SpellE">dmap</span>(:,3)))</p>
+<p><span class="GramE">Then running:</span></p>
+<p>&gt;&gt;[<span class="SpellE">C<span class="GramE">,h</span></span>]=contour(<span class="SpellE">X,Y,Z,rangeZ</span>)</p>
+<p> <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg6.jpg" v:shapes="_x0000_i1030"> </p>
+<p>This makes a 2-D contour plot.&nbsp; Again you could left off the “[<span class="SpellE">C<span class="GramE">,h</span></span>]” as this is a handle, but it 
+  is useful for labeling the contour lines:</p>
+<p>&gt;&gt;<span class="SpellE">c_h</span>=<span class="SpellE">clabel</span>(<span class="SpellE">C<span class="GramE">,h,rangeZ</span></span>(1:2:end))</p>
+<p>I chose to take every other value within “<span class="SpellE">rangeZ</span>”</p>
+<p> <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg7.jpg" v:shapes="_x0000_i1031"> </p>
+<p>You can actually combine contours and surfaces and make your surface plot look 
+  better and with no grid lines:</p>
+<p>&gt;&gt;surf(X,Y,Z,'EdgeColor','none','FaceColor','interp','FaceLighting','phong')</p>
+<p>And then add 3-D contour lines:</p>
+<p>&gt;&gt; contour3(<span class="SpellE">X<span class="GramE">,Y,Z,rangeZ</span>,'k</span>')</p>
+<p> <img width="536" height="484" src="./Surfaces and Grids in Matlab_files/msg8.jpg" v:shapes="_x0000_i1032"> </p>
+<p>There are many more possible plots with surfaces and grids.&nbsp; I strongly urge 
+  you to look at the help files.</p>
+<p>&nbsp;</p>
+<hr size="3" width="100%" align="center">
+<p>C. Connors, 2004, updated 2010</p>
+
+
+</body></html>

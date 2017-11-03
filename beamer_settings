@@ -1,0 +1,41 @@
+http://blog.sina.com.cn/s/blog_8e8bd6b90100u28o.html
+1. 默认定理环境是不显示编号的，通过导言区使用开始使用定理编号
+\setbeamertemplate{theorems}[numbered]
+复制代码
+2.图和表格的标题显示标号
+\setbeamertemplate{caption}[numbered] 
+
+5. 通过使用如下命令使得一段不编译
+\iffalse
+   ....
+\fi
+
+10. 将图、表标题等使用中文（
+\renewcommand\contentsname{目\ 录}
+\renewcommand\listfigurename{插图目录}
+\renewcommand\listtablename{表格目录}
+%\renewcommand\abstractname{摘\ 要}  %err undefined
+%\renewcommand\refname{参考文献}         %article类型
+\renewcommand\bibname{参\ 考\ 文\ 献}    %book类型
+\renewcommand\indexname{索\ 引}
+\renewcommand\figurename{图}
+\renewcommand\tablename{表}
+\renewcommand\partname{部分}
+
+11 使用如下命令定制定理等，显示“定理”等，编号按照节标题独立编号
+\newtheorem{mythl}{\hei 引理}[section]
+\newtheorem{mytht}{\hei 定理}[section]
+\newtheorem{mythr}{\hei 注}[section]
+\newtheorem{mythc}{\hei 推论}[section]
+\newtheorem{mythd}{\hei 定义}[section]
+\newtheorem{mytha}{\hei 公理}
+\newtheorem{mythp}{\hei 命题}
+\newtheorem{mythe}{\hei 练习}
+\newtheorem{myli}{\hei 例}[section]
+
+例如定理，代码为：
+\begin{mytht}
+.......
+\end{mytht}
+
+
